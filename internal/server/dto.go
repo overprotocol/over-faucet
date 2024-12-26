@@ -18,6 +18,7 @@ type claimRequest struct {
 
 type claimResponse struct {
 	Message string `json:"msg"`
+	TxHash 	string `json:"tx_hash,omitempty"`
 }
 
 type infoResponse struct {

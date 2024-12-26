@@ -66,7 +66,10 @@ func (s *Server) handleClaim() http.HandlerFunc {
 			"txHash":  txHash,
 			"address": address,
 		}).Info("Transaction sent successfully")
-		resp := claimResponse{Message: fmt.Sprintf("Txhash: %s", txHash)}
+		resp := claimResponse{
+			Message: fmt.Sprintf("Txhash: %s", txHash),
+			TxHash:  fmt.Sprintf("%s", txHash),
+		}
 		renderJSON(w, resp, http.StatusOK)
 	}
 }

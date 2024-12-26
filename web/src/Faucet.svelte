@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import { getAddress } from '@ethersproject/address';
   import { setDefaults as setToast, toast } from 'bulma-toast';
 
@@ -14,6 +14,8 @@
 
   let mounted = false;
   let hcaptchaLoaded = false;
+  let lastTxHash = null;
+  let txHashTimeout;
 
   onMount(async () => {
     const res = await fetch('/api/info');
@@ -42,6 +44,11 @@
     pauseOnHover: true,
     closeOnClick: false,
     animate: { in: 'fadeIn', out: 'fadeOut' },
+  });
+
+  // Clear timeout when component is destroyed
+  onDestroy(() => {
+    if (txHashTimeout) clearTimeout(txHashTimeout);
   });
 
   async function handleRequest() {
@@ -78,9 +85,26 @@
         }),
       });
 
-      let { msg } = await res.json();
+      let { msg, tx_hash } = await res.json();
       let type = res.ok ? 'is-success' : 'is-warning';
-      toast({ message: msg, type });
+      
+      if (res.ok && tx_hash) {
+        // Clear any existing timeout
+        if (txHashTimeout) clearTimeout(txHashTimeout);
+        
+        lastTxHash = tx_hash;
+        
+        // Set new timeout to clear the hash after 10 seconds
+        txHashTimeout = setTimeout(() => {
+          lastTxHash = null;
+        }, 10000);
+      }
+
+      toast({ 
+        message: msg, 
+        type,
+        duration: 5000,
+      });
     } catch (err) {
       console.error(err);
     }
@@ -89,6 +113,11 @@
   function capitalize(str) {
     const lower = str.toLowerCase();
     return str.charAt(0).toUpperCase() + lower.slice(1);
+  }
+
+  function truncateHash(hash) {
+    if (!hash) return '';
+    return `${hash.slice(0, 4)}...${hash.slice(-4)}`;
   }
 </script>
 
@@ -174,6 +203,25 @@
                     </button>
                   </p>
                 </div>
+                
+                {#if lastTxHash}
+                  <div class="view-transaction">
+                    <div class="transaction-info">
+                      <span class="hash-text">Tx: {truncateHash(lastTxHash)}</span>
+                      <a
+                        href={`https://dolphin-scan.over.network/tx/${lastTxHash}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="button is-light is-rounded is-small"
+                      >
+                        <span class="icon">
+                          <i class="fa fa-external-link"></i>
+                        </span>
+                        <span>View Transaction</span>
+                      </a>
+                    </div>
+                  </div>
+                {/if}
               </div>
             </div>
           </div>
@@ -266,5 +314,33 @@
 
   .button.is-primary:hover {
     background-color: #e66a31;
+  }
+
+  .view-transaction {
+    margin-top: 1rem;
+    text-align: center;
+  }
+
+  .transaction-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .hash-text {
+    color: #666;
+    font-family: monospace;
+    font-size: 0.9em;
+  }
+
+  .view-transaction .button {
+    border: 1px solid #F5773E;
+    color: #F5773E;
+  }
+
+  .view-transaction .button:hover {
+    background-color: #F5773E;
+    color: white;
   }
 </style>
