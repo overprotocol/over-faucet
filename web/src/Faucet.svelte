@@ -1,7 +1,6 @@
 <script>
   import { onMount } from 'svelte';
   import { getAddress } from '@ethersproject/address';
-  import { CloudflareProvider } from '@ethersproject/providers';
   import { setDefaults as setToast, toast } from 'bulma-toast';
 
   let input = null;
@@ -50,20 +49,6 @@
     if (address === null) {
       toast({ message: 'input required', type: 'is-warning' });
       return;
-    }
-
-    if (address.endsWith('.eth')) {
-      try {
-        const provider = new CloudflareProvider();
-        address = await provider.resolveName(address);
-        if (!address) {
-          toast({ message: 'invalid ENS name', type: 'is-warning' });
-          return;
-        }
-      } catch (error) {
-        toast({ message: error.reason, type: 'is-warning' });
-        return;
-      }
     }
 
     try {
@@ -135,34 +120,61 @@
     </div>
 
     <div class="hero-body">
-      <div class="container has-text-centered">
-        <div class="column is-6 is-offset-3">
-          <h1 class="title">
-            Receive {faucetInfo.payout}
-            {faucetInfo.symbol} per request
-          </h1>
-          <h2 class="subtitle">
-            Serving from {faucetInfo.account}
-          </h2>
-          <div id="hcaptcha" data-size="invisible"></div>
-          <div class="box">
-            <div class="field is-grouped">
-              <p class="control is-expanded">
-                <input
-                  bind:value={input}
-                  class="input is-rounded"
-                  type="text"
-                  placeholder="Enter your address or ENS name"
-                />
-              </p>
-              <p class="control">
-                <button
-                  on:click={handleRequest}
-                  class="button is-primary is-rounded"
-                >
-                  Request
-                </button>
-              </p>
+      <div class="container">
+        <div class="columns is-vcentered">
+          <!-- Left Column - Protocol Info -->
+          <div class="column is-5 left-column">
+            <img src="/logo.png" alt="Over Protocol Logo" class="protocol-logo" />
+            <div class="protocol-info">
+              <h2 class="title is-4">Faucet for Dolphin</h2>
+              <div class="links-section">
+                <a href="https://docs.over.network" class="protocol-link" target="_blank" rel="noopener noreferrer">
+                  <span class="icon"><i class="fa fa-book"></i></span>
+                  <span>Documentation</span>
+                </a>
+                <a href="https://discord.com/invite/overprotocol" class="protocol-link" target="_blank" rel="noopener noreferrer">
+                  <span class="icon"><i class="fa fa-comments"></i></span>
+                  <span>Discord Community</span>
+                </a>
+                <a href="https://github.com/overprotocol" class="protocol-link" target="_blank" rel="noopener noreferrer">
+                  <span class="icon"><i class="fa fa-github"></i></span>
+                  <span>GitHub</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column - Faucet Interface -->
+          <div class="column is-7">
+            <div class="faucet-container">
+              <h1 class="title">
+                Receive {faucetInfo.payout}
+                {faucetInfo.symbol} per request
+              </h1>
+              <h2 class="subtitle">
+                Serving from {faucetInfo.account}
+              </h2>
+              <div id="hcaptcha" data-size="invisible"></div>
+              <div class="box">
+                <div class="field is-grouped">
+                  <p class="control is-expanded">
+                    <input
+                      bind:value={input}
+                      class="input is-rounded"
+                      type="text"
+                      placeholder="Enter your address"
+                    />
+                  </p>
+                  <p class="control">
+                    <button
+                      on:click={handleRequest}
+                      class="button is-primary is-rounded"
+                    >
+                      Request
+                    </button>
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -173,19 +185,61 @@
 
 <style>
   .hero.is-info {
-    background:
-      linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-      url('/background.jpg') no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
+    background: linear-gradient(135deg, #1a1a1a 0%, #363636 100%);
   }
+
   .hero .subtitle {
-    padding: 3rem 0;
+    padding: 1.5rem 0;
     line-height: 1.5;
   }
+
   .box {
     border-radius: 19px;
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  .left-column {
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+  }
+
+  .protocol-logo {
+    max-width: 200px;
+    margin-bottom: 2rem;
+  }
+
+  .protocol-info {
+    color: #1a1a1a;
+  }
+
+  .protocol-info h2 {
+    color: #1a1a1a !important;
+  }
+
+  .links-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .protocol-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #1a1a1a;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+  }
+
+  .protocol-link:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #1a1a1a;
+  }
+
+  .faucet-container {
+    padding: 2rem;
   }
 </style>
