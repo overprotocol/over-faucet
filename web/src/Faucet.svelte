@@ -196,6 +196,7 @@
   .box {
     border-radius: 19px;
     background: rgba(255, 255, 255, 0.9);
+    padding: 1.5rem;
   }
 
   .left-column {
@@ -241,5 +242,29 @@
 
   .faucet-container {
     padding: 2rem;
+    color: white;
+  }
+
+  .faucet-container .title,
+  .faucet-container .subtitle {
+    color: white;
+  }
+
+  .input.is-rounded {
+    box-shadow: none;
+    border: 2px solid #eee;
+  }
+
+  .input.is-rounded:focus {
+    border-color: #F5773E;
+  }
+
+  .button.is-primary {
+    background-color: #F5773E;
+    border-color: transparent;
+  }
+
+  .button.is-primary:hover {
+    background-color: #e66a31;
   }
 </style>
