@@ -6,9 +6,9 @@
   let input = null;
   let faucetInfo = {
     account: '0x0000000000000000000000000000000000000000',
-    network: 'testnet',
+    network: 'dolphin',
     payout: 1,
-    symbol: 'ETH',
+    symbol: 'OVER',
     hcaptcha_sitekey: '',
   };
 
@@ -178,7 +178,7 @@
             <div class="faucet-container">
               <h1 class="title">
                 Receive {faucetInfo.payout}
-                {faucetInfo.symbol} per request
+                Testnet {faucetInfo.symbol} per request
               </h1>
               <h2 class="subtitle">
                 Serving from {faucetInfo.account}

@@ -10,7 +10,7 @@ The faucet is a web application with the goal of distributing small amounts of E
 
 * Configure the funding account using a private key or keystore
 * Implement CAPTCHA verification to prevent abuse
-* Rate-limit requests by ETH address and IP address to prevent spam
+* Rate-limit requests by OVER address and IP address to prevent spam
 * Prevent X-Forwarded-For spoofing by specifying the number of reverse proxies
 
 ## Get started
